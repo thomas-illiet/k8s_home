@@ -1,12 +1,12 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: radarr
+  name: ombi
   namespace: media
 spec:
   selector:
-    app: radarr
+    app: ombi
   ports:
-  - name: radarr
-    port: 7878
-    targetPort: 7878
+  - name: ombi
+    port: 3579
+    targetPort: ombi

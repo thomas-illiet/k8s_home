@@ -1,0 +1,45 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: ombi
+  namespace: media
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: ombi
+    spec:
+      volumes:
+      - name: ombi
+        iscsi:
+          iqn: iqn.2014-09.com.radoncanyon:nas1:ombi
+          targetPortal: nas1-storage.radoncanyon.com
+          lun: 0
+      containers:
+      - name: ombi
+        image: linuxserver/ombi:120
+        volumeMounts:
+        - name: ombi
+          subPath: config
+          mountPath: /config
+        env:
+        - name: PUID
+          value: '1001'
+        - name: PGID
+          value: '1001'
+        - name: TZ
+          value: 'America/New_York'
+        ports:
+        - name: ombi
+          containerPort: 3579
+        readinessProbe:
+          tcpSocket:
+            port: ombi
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          tcpSocket:
+            port: ombi
+          initialDelaySeconds: 15
+          periodSeconds: 20

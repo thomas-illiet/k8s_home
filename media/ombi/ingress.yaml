@@ -1,0 +1,17 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ombi
+  namespace: media
+spec:
+  tls:
+  - hosts:
+    - o.desertbluffs.com
+  rules:
+  - host: o.desertbluffs.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: ombi
+          servicePort: ombi
