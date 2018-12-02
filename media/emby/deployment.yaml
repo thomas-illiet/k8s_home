@@ -31,7 +31,7 @@ spec:
           secretName: emby
       containers:
       - name: emby
-        image: emby/embyserver:3.6.0.73
+        image: emby/embyserver:3.6.0.74
         volumeMounts:
         - name: emby
           subPath: config
