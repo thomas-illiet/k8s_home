@@ -1,0 +1,53 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: sprutio
+  namespace: media
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: sprutio
+    spec:
+      volumes:
+      containers:
+      - name: app
+        image: beget/sprutio-app
+        volumeMounts:
+        - name: config
+          subPath: config
+          mountPath: /config
+        - name: data
+          mountPath: /data
+      - name: rpc
+        image: beget/sprutio-rpc
+        volumeMounts:
+        - name: mariadb
+          subPath: config
+          mountPath: /config
+        - name: mariadb-databases
+          mountPath: /config/databases
+        - name: mariadb-log
+          mountPath: /config/log
+        env:
+        - name: PUID
+          value: '1001'
+        - name: PGID
+          value: '1001'
+        - name: TZ
+          value: 'America/New_York'
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: nextcloud
+              key: MYSQL_ROOT_PASSWORD
+      - name: nginx
+        image: beget/sprutio-nginx
+      - name: frontend
+        image: beget/sprutio-frontend
+      - name: cron
+        image: beget/sprutio-cron
+      - name: redis
+        image: redis:3.0
