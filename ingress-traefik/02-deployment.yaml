@@ -1,0 +1,50 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  namespace: ingress-nginx
+  name: traefik-ingress-controller
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: traefik-ingress-controller
+  namespace: ingress-nginx
+  labels:
+    app.kubernetes.io/name: ingress-traefik
+    app.kubernetes.io/part-of: ingress-traefik
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: ingress-traefik
+      app.kubernetes.io/part-of: ingress-traefik
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: ingress-traefik
+        app.kubernetes.io/part-of: ingress-traefik
+    spec:
+      serviceAccountName: traefik-ingress-controller
+      containers:
+        - name: traefik-ingress-controller
+          image: traefik:v2.0
+          args:
+            - --api.insecure
+            - --accesslog
+            - --entrypoints.http.Address=:80
+            - --entrypoints.https.Address=:443
+            - --providers.kubernetescrd
+          env:
+            - name: CF_API_EMAIL
+              value: y26fpcpdk9@liamekaens.com
+            - name: CF_API_KEY
+              value: 939dccf810ba31b170c14630a05037bec673e
+          ports:
+            - name: http
+              containerPort: 80
+            - name: https
+              containerPort: 443
+            - name: traefik
+              containerPort: 8080
